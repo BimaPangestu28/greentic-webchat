@@ -1,4 +1,5 @@
 import { ConnectionDot } from './ConnectionDot';
+import { Badge } from '@/components/ui/badge';
 import { useTokenFetchState } from '../state/token';
 import { useWebChatConnectionStatus } from '../state/connection';
 
@@ -20,20 +21,22 @@ export function StatusBar({ className, brand, show = true }: { className?: strin
   let kind: 'ok' | 'warn' | 'err' = 'warn';
 
   if (tokenFetchState === 'error') {
-    text = 'Unable to fetch a Direct Line token. Please try again later.';
+    text = 'Token error';
     kind = 'err';
   } else if (connectionStatus === 'connected') {
     text = 'Connected';
     kind = 'ok';
   } else if (connectionStatus === 'failedToConnect' || connectionStatus === 'expiredToken' || connectionStatus === 'reconnecting') {
-    text = 'Disconnected. Reconnecting…';
+    text = 'Reconnecting…';
     kind = 'err';
   }
 
   return (
-    <div className={className ? `${className} status-bar` : 'status-bar'} role="status" aria-live="polite">
-      <ConnectionDot kind={kind} brand={brand} />
-      <span>{text}</span>
+    <div className={className} role="status" aria-live="polite">
+      <Badge variant={kind} className="gap-1.5 text-xs">
+        <ConnectionDot kind={kind} brand={brand} />
+        {text}
+      </Badge>
     </div>
   );
 }

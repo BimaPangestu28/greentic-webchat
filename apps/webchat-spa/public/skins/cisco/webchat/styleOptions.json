@@ -1,16 +1,53 @@
 {
-  "hideUploadButton": true,
-  "bubbleBorderRadius": 12,
-  "bubbleBackground": "#FFFFFF",
-  "bubbleFromUserBackground": "#00a0e0",
-  "bubbleFromUserBorderRadius": 12,
-  "bubbleTextColor": "#0b1220",
-  "bubbleFromUserTextColor": "#FFFFFF",
+  "accent": "#049fd9",
+
+  "backgroundColor": "#F4F6F8",
+
+  "botAvatarBackgroundColor": "#049fd9",
   "botAvatarInitials": "AI",
+  "userAvatarBackgroundColor": "#0b1220",
   "userAvatarInitials": "You",
-  "accent": "#00a0e0",
-  "subtle": "#475569",
-  "cardEmphasisBackgroundColor": "#f1f5f9",
+  "avatarSize": 36,
+  "showAvatarInGroup": "sender",
+
+  "bubbleBackground": "#FFFFFF",
+  "bubbleBorderColor": "#E2E8F0",
+  "bubbleBorderRadius": 12,
+  "bubbleBorderWidth": 1,
+  "bubbleTextColor": "#0b1220",
+  "bubbleNubSize": 0,
+  "bubbleMinWidth": 60,
+
+  "bubbleFromUserBackground": "#049fd9",
+  "bubbleFromUserBorderColor": "transparent",
+  "bubbleFromUserBorderRadius": 12,
+  "bubbleFromUserBorderWidth": 0,
+  "bubbleFromUserTextColor": "#FFFFFF",
+  "bubbleFromUserNubSize": 0,
+
+  "sendBoxBackground": "#FFFFFF",
+  "sendBoxBorderTop": "solid 1px #E2E8F0",
+  "sendBoxTextColor": "#0b1220",
+  "sendBoxPlaceholderColor": "#8E95A2",
+  "sendBoxHeight": 52,
+
+  "hideUploadButton": true,
+
+  "suggestedActionBackground": "#FFFFFF",
+  "suggestedActionBorderColor": "#D0D5DD",
+  "suggestedActionBorderRadius": 8,
+  "suggestedActionBorderWidth": 1,
+  "suggestedActionTextColor": "#049fd9",
+  "suggestedActionHeight": 36,
+
+  "timestampColor": "#8E95A2",
+  "timestampFormat": "relative",
+
+  "groupTimestamp": 30000,
+  "rootHeight": "100%",
+  "rootWidth": "100%",
   "paddingRegular": 12,
-  "primaryFont": "ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+  "transitionDuration": "0.2s",
+
+  "primaryFont": "'Inter', ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
 }

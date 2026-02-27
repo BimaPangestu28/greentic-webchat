@@ -1,3 +1,5 @@
+import { cn } from '@/lib/utils';
+
 type Kind = 'ok' | 'warn' | 'err';
 
 type BrandColors = {
@@ -6,16 +8,23 @@ type BrandColors = {
   err?: string;
 };
 
-const DEFAULT_COLORS: Record<Kind, string> = {
-  ok: '#22c55e',
-  warn: '#f59e0b',
-  err: '#ef4444'
+const KIND_CLASSES: Record<Kind, string> = {
+  ok: 'bg-emerald-500',
+  warn: 'bg-amber-500 animate-pulse-dot',
+  err: 'bg-red-500',
 };
 
 export function ConnectionDot({ kind, brand }: { kind: Kind; brand?: BrandColors }) {
-  const style = {
-    backgroundColor: brand?.[kind] ?? DEFAULT_COLORS[kind]
-  };
+  const brandColor = brand?.[kind];
 
-  return <span className="connection-dot" aria-hidden="true" style={style} />;
+  return (
+    <span
+      className={cn(
+        'inline-block h-2 w-2 rounded-full',
+        !brandColor && KIND_CLASSES[kind],
+      )}
+      style={brandColor ? { backgroundColor: brandColor } : undefined}
+      aria-hidden="true"
+    />
+  );
 }

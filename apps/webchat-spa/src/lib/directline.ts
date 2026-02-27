@@ -59,10 +59,11 @@ async function requestToken(url: string): Promise<string> {
   return payload.token;
 }
 
-export async function resolveDirectLineConfig(skinTokenUrl: string): Promise<DirectLineConfig> {
+export async function resolveDirectLineConfig(skinTokenUrl: string, skinDomain?: string): Promise<DirectLineConfig> {
   const override = getDirectLineOverride();
   if (!override) {
-    return { token: await requestToken(skinTokenUrl) };
+    const token = await requestToken(skinTokenUrl);
+    return skinDomain ? { token, domain: skinDomain } : { token };
   }
 
   const normalized = normalizeUrl(override);

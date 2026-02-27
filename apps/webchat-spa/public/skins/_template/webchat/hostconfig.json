@@ -1,17 +1,100 @@
 {
-  "fontFamily": "'Segoe UI', 'Helvetica Neue', Arial, sans-serif",
+  "fontFamily": "'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif",
+  "fontSizes": {
+    "small": 12,
+    "default": 14,
+    "medium": 16,
+    "large": 20,
+    "extraLarge": 24
+  },
+  "fontWeights": {
+    "lighter": 300,
+    "default": 400,
+    "bolder": 600
+  },
   "spacing": {
     "small": 6,
-    "default": 12,
+    "default": 10,
     "medium": 16,
-    "large": 20
+    "large": 24,
+    "extraLarge": 32,
+    "padding": 16
+  },
+  "separator": {
+    "lineThickness": 1,
+    "lineColor": "#E8EBF0"
+  },
+  "imageSizes": {
+    "small": 40,
+    "medium": 80,
+    "large": 160
   },
   "containerStyles": {
     "default": {
+      "backgroundColor": "#FFFFFF",
       "foregroundColors": {
-        "default": { "default": "#161616", "subtle": "#525252" },
-        "accent": { "default": "#0F62FE", "subtle": "#0F62FE" }
+        "default": { "default": "#1A1A2E", "subtle": "#5A6070" },
+        "dark": { "default": "#1A1A2E", "subtle": "#3A3F4B" },
+        "light": { "default": "#5A6070", "subtle": "#8E95A2" },
+        "accent": { "default": "#0F62FE", "subtle": "#4589FF" },
+        "good": { "default": "#198038", "subtle": "#42BE65" },
+        "warning": { "default": "#B28600", "subtle": "#F1C21B" },
+        "attention": { "default": "#DA1E28", "subtle": "#FA4D56" }
+      }
+    },
+    "emphasis": {
+      "backgroundColor": "#F4F5F7",
+      "foregroundColors": {
+        "default": { "default": "#1A1A2E", "subtle": "#5A6070" },
+        "dark": { "default": "#1A1A2E", "subtle": "#3A3F4B" },
+        "light": { "default": "#5A6070", "subtle": "#8E95A2" },
+        "accent": { "default": "#0F62FE", "subtle": "#4589FF" },
+        "good": { "default": "#198038", "subtle": "#42BE65" },
+        "warning": { "default": "#B28600", "subtle": "#F1C21B" },
+        "attention": { "default": "#DA1E28", "subtle": "#FA4D56" }
+      }
+    },
+    "accent": {
+      "backgroundColor": "#EDF5FF",
+      "foregroundColors": {
+        "default": { "default": "#1A1A2E", "subtle": "#5A6070" },
+        "dark": { "default": "#1A1A2E", "subtle": "#3A3F4B" },
+        "light": { "default": "#5A6070", "subtle": "#8E95A2" },
+        "accent": { "default": "#0F62FE", "subtle": "#4589FF" },
+        "good": { "default": "#198038", "subtle": "#42BE65" },
+        "warning": { "default": "#B28600", "subtle": "#F1C21B" },
+        "attention": { "default": "#DA1E28", "subtle": "#FA4D56" }
       }
     }
-  }
+  },
+  "actions": {
+    "actionAlignment": "stretch",
+    "actionsOrientation": "vertical",
+    "buttonSpacing": 8,
+    "maxActions": 6,
+    "showCard": {
+      "actionMode": "inline",
+      "inlineTopMargin": 12
+    },
+    "preExpandSingleShowCardAction": false
+  },
+  "adaptiveCard": {
+    "allowCustomStyle": true
+  },
+  "textBlock": {
+    "headingLevel": 2
+  },
+  "inputs": {
+    "label": {
+      "requiredInputs": {
+        "weight": "bolder",
+        "size": "default"
+      },
+      "optionalInputs": {
+        "weight": "default",
+        "size": "default"
+      }
+    }
+  },
+  "supportsInteractivity": true
 }

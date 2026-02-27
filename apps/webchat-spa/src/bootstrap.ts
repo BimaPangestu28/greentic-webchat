@@ -44,7 +44,7 @@ export async function prepareExperience(): Promise<PreparedExperience> {
 
   const [webChat, directLineConfig, styleOptions, hostConfig, hooksModule, shellHtml] = await Promise.all([
     ensureWebChatLoaded(),
-    resolveDirectLineConfig(skin.directLine.tokenUrl),
+    resolveDirectLineConfig(skin.directLine.tokenUrl, skin.directLine.domain),
     fetchJson<Record<string, unknown>>(skin.webchat.styleOptions),
     fetchJson<Record<string, unknown>>(skin.webchat.adaptiveCardsHostConfig),
     loadHooks(skin.hooks?.script),
@@ -64,7 +64,8 @@ export async function prepareExperience(): Promise<PreparedExperience> {
 
       const directLineConfigOptions = {
         token: directLineConfig.token,
-        webSocket: true,
+        webSocket: false,
+        pollingInterval: 2000,
         ...(directLineConfig.domain ? { domain: directLineConfig.domain } : {})
       };
       const directLine = webChat.createDirectLine(directLineConfigOptions);
@@ -75,10 +76,77 @@ export async function prepareExperience(): Promise<PreparedExperience> {
         adaptiveCardsHostConfig: hostConfig
       };
 
-      const middleware = hooksModule?.createStoreMiddleware?.();
+      // Middleware that converts Action.Execute into postBack so WebChat can handle it,
+      // shows a spinner on the clicked AC button while waiting for a response,
+      // and auto-scrolls to bottom on new incoming activities.
+      const coreMiddleware: StoreMiddleware = (store) => next => action => {
+        const a = action as {
+          type?: string;
+          payload?: {
+            cardAction?: { type?: string; value?: unknown; verb?: string; data?: unknown };
+            activity?: { from?: { role?: string } };
+          };
+        };
+
+        // Convert Action.Execute → postBack
+        if (
+          a.type === 'WEB_CHAT/SEND_MESSAGE' &&
+          a.payload?.cardAction?.type === 'execute'
+        ) {
+          const ca = a.payload.cardAction;
+          return next({
+            ...a,
+            payload: {
+              ...a.payload,
+              cardAction: {
+                type: 'postBack',
+                value: ca.data ?? ca.value ?? { verb: ca.verb }
+              }
+            }
+          });
+        }
+
+        // Patch incoming AC attachments before WebChat renders them:
+        // - Rewrite relative URLs to absolute (OpenUrl fix)
+        // - Convert Action.Execute → Action.Submit (WebChat compat)
+        if (a.type === 'DIRECT_LINE/INCOMING_ACTIVITY') {
+          patchIncomingActivity(a.payload?.activity);
+        }
+
+        // Card action sent → show spinner on the last clicked AC button
+        if (
+          a.type === 'WEB_CHAT/SEND_POST_BACK' ||
+          a.type === 'WEB_CHAT/SEND_MESSAGE_BACK' ||
+          (a.type === 'WEB_CHAT/SEND_MESSAGE' && a.payload?.cardAction)
+        ) {
+          showButtonSpinner(target);
+        }
+
+        // Let the action through first so WebChat processes + renders it
+        const result = next(action);
+
+        // Bot response arrived → clear spinners + scroll to bottom via SDK
+        if (
+          a.type === 'DIRECT_LINE/INCOMING_ACTIVITY' &&
+          a.payload?.activity?.from?.role === 'bot'
+        ) {
+          clearButtonSpinners(target);
+          setTimeout(() => store.dispatch({ type: 'WEB_CHAT/SCROLL_TO_END' }), 100);
+          setTimeout(() => store.dispatch({ type: 'WEB_CHAT/SCROLL_TO_END' }), 500);
+        }
+
+        return result;
+      };
+
+      const skinMiddleware = hooksModule?.createStoreMiddleware?.();
+      const middlewares: StoreMiddleware[] = [coreMiddleware];
+      if (skinMiddleware) {
+        middlewares.push(skinMiddleware);
+      }
+
       let store: WebChatStore | undefined;
       if (webChat.createStore) {
-        store = middleware ? webChat.createStore({}, middleware) : webChat.createStore();
+        store = webChat.createStore({}, ...middlewares);
         if (store) {
           config.store = store;
         }
@@ -264,3 +332,76 @@ function rewriteShellHtml(html: string): string {
       return `url(${q}${resolvePublicUrl(path)}${q})`;
     });
 }
+
+// ── Button spinner + auto-scroll helpers ──
+
+/** Mark the most recently focused/clicked AC button as loading. */
+function showButtonSpinner(root: HTMLElement) {
+  // The browser sets :focus on the clicked button before the store action fires.
+  const focused = root.querySelector('.ac-pushButton:focus') as HTMLElement | null;
+  const btn = focused ?? root.querySelector('.ac-pushButton:last-of-type') as HTMLElement | null;
+  if (btn && !btn.classList.contains('is-loading')) {
+    btn.classList.add('is-loading');
+    btn.setAttribute('aria-busy', 'true');
+  }
+}
+
+/** Remove loading state from all AC buttons. */
+function clearButtonSpinners(root: HTMLElement) {
+  root.querySelectorAll('.ac-pushButton.is-loading').forEach(btn => {
+    btn.classList.remove('is-loading');
+    btn.removeAttribute('aria-busy');
+  });
+}
+
+const RELATIVE_URL_RE = /^\/[^/]/;
+
+/** Patch an incoming activity's AC attachments before WebChat renders them. */
+function patchIncomingActivity(activity: unknown) {
+  if (!activity || typeof activity !== 'object') return;
+  const act = activity as { attachments?: Array<{ content?: unknown }> };
+  if (!Array.isArray(act.attachments)) return;
+  for (const att of act.attachments) {
+    if (att.content && typeof att.content === 'object') {
+      deepPatchCard(att.content as Record<string, unknown>);
+    }
+  }
+}
+
+/**
+ * Recursively walk an AC JSON object and:
+ * 1. Resolve relative URLs to absolute (fixes OpenUrl block)
+ * 2. Convert Action.Execute → Action.Submit (fixes "unknown action" error)
+ */
+function deepPatchCard(obj: Record<string, unknown>) {
+  for (const key of Object.keys(obj)) {
+    const val = obj[key];
+
+    // Resolve relative URLs
+    if (typeof val === 'string' && RELATIVE_URL_RE.test(val) && (key === 'url' || key === 'value' || key === 'iconUrl')) {
+      obj[key] = new URL(val, window.location.origin).href;
+    }
+
+    // Convert Action.Execute → Action.Submit
+    if (key === 'type' && val === 'Action.Execute') {
+      obj[key] = 'Action.Submit';
+      // Move "data" to "data" (Submit uses data, Execute uses data too, but ensure it's there)
+      if (obj['data'] === undefined && obj['verb'] !== undefined) {
+        obj['data'] = { verb: obj['verb'] };
+      }
+    }
+
+    // Recurse into arrays
+    if (Array.isArray(val)) {
+      for (const item of val) {
+        if (item && typeof item === 'object') {
+          deepPatchCard(item as Record<string, unknown>);
+        }
+      }
+    // Recurse into objects
+    } else if (val && typeof val === 'object') {
+      deepPatchCard(val as Record<string, unknown>);
+    }
+  }
+}
+

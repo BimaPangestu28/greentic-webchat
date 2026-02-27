@@ -1,12 +1,55 @@
 {
   "accent": "#0F62FE",
+
+  "backgroundColor": "#F7F8FA",
+
   "botAvatarBackgroundColor": "#0F62FE",
   "botAvatarInitials": "GA",
-  "userAvatarBackgroundColor": "#021D4A",
+  "userAvatarBackgroundColor": "#1A1A2E",
   "userAvatarInitials": "You",
+  "avatarSize": 36,
+  "showAvatarInGroup": "sender",
+
+  "bubbleBackground": "#FFFFFF",
+  "bubbleBorderColor": "#E8EBF0",
+  "bubbleBorderRadius": 12,
+  "bubbleBorderWidth": 1,
+  "bubbleTextColor": "#1A1A2E",
+  "bubbleNubSize": 0,
+  "bubbleMinWidth": 60,
+
+  "bubbleFromUserBackground": "#0F62FE",
+  "bubbleFromUserBorderColor": "transparent",
+  "bubbleFromUserBorderRadius": 12,
+  "bubbleFromUserBorderWidth": 0,
+  "bubbleFromUserTextColor": "#FFFFFF",
+  "bubbleFromUserNubSize": 0,
+
+  "sendBoxBackground": "#FFFFFF",
+  "sendBoxBorderTop": "solid 1px #E8EBF0",
+  "sendBoxTextColor": "#1A1A2E",
+  "sendBoxPlaceholderColor": "#8E95A2",
+  "sendBoxHeight": 52,
+  "sendBoxBorderRadius": 0,
+
   "hideUploadButton": true,
-  "bubbleBorderRadius": 8,
-  "bubbleFromUserBorderRadius": 8,
-  "bubbleNubSize": 4,
-  "bubbleNubOffset": 0
+  "hideSendBox": false,
+
+  "suggestedActionBackground": "#FFFFFF",
+  "suggestedActionBorderColor": "#D0D5DD",
+  "suggestedActionBorderRadius": 8,
+  "suggestedActionBorderWidth": 1,
+  "suggestedActionTextColor": "#0F62FE",
+  "suggestedActionHeight": 36,
+
+  "timestampColor": "#8E95A2",
+  "timestampFormat": "relative",
+
+  "groupTimestamp": 30000,
+
+  "rootHeight": "100%",
+  "rootWidth": "100%",
+
+  "paddingRegular": 12,
+  "transitionDuration": "0.2s"
 }
