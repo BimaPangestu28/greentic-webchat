@@ -8,7 +8,8 @@
     "primary": "#005c9a"
   },
   "directLine": {
-    "tokenUrl": "https://demo.greentic.ai/token?tenant=cisco"
+    "tokenUrl": "http://127.0.0.1:8080/token?tenant=default",
+    "domain": "http://127.0.0.1:8080/v3/directline"
   },
   "webchat": {
     "styleOptions": "/skins/cisco/webchat/styleOptions.json",
